@@ -24,7 +24,7 @@ if __name__ == '__main__':
             cipher = args['cipher']
 
             encrypt_func = encode if command == 'encode' else decode
-            encrypt_func(args['input_file'], args['output_file'], cipher, key)
+            encrypt_func(args['input_file'], args['output_file'], cipher, args['key'])
 
         elif command == 'train':
             model_file = args['model_file']

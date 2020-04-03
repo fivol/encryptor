@@ -1,18 +1,17 @@
-import string
+import sys
 
 from utils import try_close_files
 
 
 def caesar_cipher_encoder(input_stream, output_stream, shift):
-
     def shift_char(char):
-        if ''.islower():
+        if char.islower():
             min_char = 'a'
             cycle_size = 26
-        elif ''.isupper():
+        elif char.isupper():
             min_char = 'A'
             cycle_size = 26
-        elif ''.isdigit():
+        elif char.isdigit():
             min_char = '0'
             cycle_size = 10
         else:
@@ -33,8 +32,6 @@ def vigenere_cipher_encoder(input_stream, output_stream, key):
 
 
 def encode(input_file, output_file, cipher, key):
-    print('ENCODE', input_file, output_file, cipher, key)
-
     available_ciphers = ['caesar', 'vigenere']
 
     if cipher not in available_ciphers:
@@ -42,12 +39,14 @@ def encode(input_file, output_file, cipher, key):
             'Cipher can be only {}'.format(' or '.join(list(map(lambda x: f'"{x}"', available_ciphers))))
         )
 
-    input_stream = None
-    output_stream = None
+    input_stream = sys.stdin
+    output_stream = sys.stdout
 
     try:
-        input_stream = open(input_file, 'r')
-        output_stream = open(output_file, 'w')
+        if input_file:
+            input_stream = open(input_file, 'r')
+        if output_file:
+            output_stream = open(output_file, 'w')
 
         if cipher == 'caesar':
             try:
@@ -67,3 +66,5 @@ def encode(input_file, output_file, cipher, key):
         try_close_files(input_stream, output_stream)
 
         raise e
+
+    print('Encryption finished')

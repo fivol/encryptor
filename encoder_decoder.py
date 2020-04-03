@@ -3,7 +3,7 @@ import sys
 from utils import try_close_files
 
 
-def caesar_cipher_encoder(input_stream, output_stream, shift):
+def caesar_cipher_encode(input_stream, output_stream, shift):
     def shift_char(char):
         if char.islower():
             min_char = 'a'
@@ -17,7 +17,7 @@ def caesar_cipher_encoder(input_stream, output_stream, shift):
         else:
             return char
 
-        return chr((ord(char) - ord(min_char) + shift) % cycle_size + ord(min_char))
+        return chr((ord(char) - ord(min_char) + shift + cycle_size) % cycle_size + ord(min_char))
 
     while True:
         c = input_stream.read(1)
@@ -31,7 +31,7 @@ def vigenere_cipher_encoder(input_stream, output_stream, key):
     pass
 
 
-def encode(input_file, output_file, cipher, key):
+def encode_decode(input_file, output_file, cipher, key, decode=False):
     available_ciphers = ['caesar', 'vigenere']
 
     if cipher not in available_ciphers:
@@ -57,7 +57,10 @@ def encode(input_file, output_file, cipher, key):
             except ValueError:
                 raise ValueError('Key must be a number')
 
-            caesar_cipher_encoder(input_stream, output_stream, key)
+            if decode:
+                key *= -1
+
+            caesar_cipher_encode(input_stream, output_stream, key)
 
         elif cipher == 'vigenere':
             vigenere_cipher_encoder(input_stream, output_stream, key)

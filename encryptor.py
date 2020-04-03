@@ -1,6 +1,5 @@
 import argparse
-from encoder import encode
-from decoder import decode
+from encoder_decoder import encode_decode
 from trainer import train
 from hackerman import hack
 
@@ -21,10 +20,16 @@ if __name__ == '__main__':
 
     try:
         if command in ['encode', 'decode']:
-            cipher = args['cipher']
+            if not args['cipher']:
+                raise ValueError('Cipher must be specified')
 
-            encrypt_func = encode if command == 'encode' else decode
-            encrypt_func(args['input_file'], args['output_file'], cipher, args['key'])
+            encode_decode(
+                args['input_file'],
+                args['output_file'],
+                args['cipher'],
+                args['key'],
+                decode=command == 'decode'
+            )
 
         elif command == 'train':
             model_file = args['model_file']

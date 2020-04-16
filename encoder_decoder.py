@@ -1,34 +1,51 @@
 import sys
+from config import ALPHABET_SIZE, LOWER_FIRST_DIGIT, UPPER_FIRST_DIGIT
+from utils import open_files_decorator
 
-from utils import try_close_files
+
+def shift_char(char, shift):
+    if char.islower():
+        min_char = LOWER_FIRST_DIGIT
+        cycle_size = ALPHABET_SIZE
+    elif char.isupper():
+        min_char = UPPER_FIRST_DIGIT
+        cycle_size = ALPHABET_SIZE
+    elif char.isdigit():
+        min_char = '0'
+        cycle_size = 10
+    else:
+        return char
+
+    return chr((ord(char) - ord(min_char) + shift + cycle_size) % cycle_size + ord(min_char))
 
 
-def caesar_cipher_encode(input_stream, output_stream, shift):
-    def shift_char(char):
-        if char.islower():
-            min_char = 'a'
-            cycle_size = 26
-        elif char.isupper():
-            min_char = 'A'
-            cycle_size = 26
-        elif char.isdigit():
-            min_char = '0'
-            cycle_size = 10
-        else:
-            return char
-
-        return chr((ord(char) - ord(min_char) + shift + cycle_size) % cycle_size + ord(min_char))
+def caesar_cipher_encrypt(input_stream, output_stream, shift, decode=False):
+    if decode:
+        shift *= -1
 
     while True:
         c = input_stream.read(1)
         if not c:
             break
+        shifted_char = shift_char(c, shift)
+        output_stream.write(shifted_char)
 
-        output_stream.write(shift_char(c))
 
+def vigenere_cipher_encrypt(input_stream, output_stream, key, decode=False):
+    key = key.lower()
+    key_digits = [ord(i) - ord('a') for i in key if 0 <= ord(i) - ord('a') < ALPHABET_SIZE]
+    if decode:
+        key_digits = list(map(lambda x: -x + ALPHABET_SIZE, key_digits))
 
-def vigenere_cipher_encoder(input_stream, output_stream, key):
-    pass
+    j = 0
+    while True:
+        c = input_stream.read(1)
+        if not c:
+            break
+
+        shift = key_digits[j % len(key_digits)]
+        output_stream.write(shift_char(c, shift))
+        j += 1
 
 
 def encode_decode(input_file, output_file, cipher, key, decode=False):
@@ -39,35 +56,16 @@ def encode_decode(input_file, output_file, cipher, key, decode=False):
             'Cipher can be only {}'.format(' or '.join(list(map(lambda x: f'"{x}"', available_ciphers))))
         )
 
-    input_stream = sys.stdin
-    output_stream = sys.stdout
+    if cipher == 'caesar':
+        try:
+            key = int(key)
+            if key == 0:
+                print('Warning: key is zero. The cipher is unreliable')
 
-    try:
-        if input_file:
-            input_stream = open(input_file, 'r')
-        if output_file:
-            output_stream = open(output_file, 'w')
+        except ValueError:
+            raise ValueError('Key must be a number')
 
-        if cipher == 'caesar':
-            try:
-                key = int(key)
-                if key == 0:
-                    print('Warning: key is zero. The cipher is unreliable')
+        caesar_cipher_encrypt(input_file, output_file, key, decode=decode)
 
-            except ValueError:
-                raise ValueError('Key must be a number')
-
-            if decode:
-                key *= -1
-
-            caesar_cipher_encode(input_stream, output_stream, key)
-
-        elif cipher == 'vigenere':
-            vigenere_cipher_encoder(input_stream, output_stream, key)
-
-    except Exception as e:
-        try_close_files(input_stream, output_stream)
-
-        raise e
-
-    print('Encryption finished')
+    elif cipher == 'vigenere':
+        vigenere_cipher_encrypt(input_file, output_file, key, decode=decode)

@@ -24,7 +24,7 @@ def hack(input_file, output_file, model_file):
     model = json.loads(model_file_text)
 
     best_decrypted_text = ''
-    best_models_similarity = 999999999
+    best_models_similarity = float('inf')
 
     text = input_file.read()
     for i in range(ALPHABET_SIZE):

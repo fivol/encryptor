@@ -1,11 +1,9 @@
-import json
 from io import StringIO
-import sys
+import json
 
 from config import ALPHABET_SIZE
 from encoder_decoder import caesar_cipher_encrypt
 from trainer import generate_model_from_text
-from utils import open_files_decorator
 
 
 def model_value_similarity(value1, value2):

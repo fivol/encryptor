@@ -1,22 +1,21 @@
 import sys
 from config import ALPHABET_SIZE, LOWER_FIRST_DIGIT, UPPER_FIRST_DIGIT
 from utils import open_files_decorator
+import string
 
 
 def shift_char(char, shift):
-    if char.islower():
-        min_char = LOWER_FIRST_DIGIT
-        cycle_size = ALPHABET_SIZE
-    elif char.isupper():
-        min_char = UPPER_FIRST_DIGIT
-        cycle_size = ALPHABET_SIZE
-    elif char.isdigit():
-        min_char = '0'
-        cycle_size = 10
-    else:
-        return char
+    alphabets = [
+        string.ascii_lowercase,
+        string.ascii_uppercase,
+        string.digits
+    ]
+    for alphabet in alphabets:
+        if char in alphabet:
+            alphabet_len = len(alphabet)
+            return alphabet[(alphabet.index(char) + shift + alphabet_len) % alphabet_len]
 
-    return chr((ord(char) - ord(min_char) + shift + cycle_size) % cycle_size + ord(min_char))
+    return char
 
 
 def caesar_cipher_encrypt(input_stream, output_stream, shift, decode=False):

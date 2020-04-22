@@ -2,3 +2,5 @@
 __pycache__/
 *.pyc
 *.txt
+!*file.txt
+!*shakespeare_sonnets.txt

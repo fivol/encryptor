@@ -52,9 +52,6 @@ if __name__ == '__main__':
             files_to_close.append(output_file)
 
         if command in ['encode', 'decode']:
-            if not args['cipher']:
-                raise ValueError('Cipher must be specified')
-
             encode_decode(
                 input_file,
                 output_file,
@@ -64,26 +61,16 @@ if __name__ == '__main__':
             )
 
         elif command == 'train':
-            model_file = args['model_file']
-            if not model_file:
-                raise ValueError('"model-file" must be specified for command train')
-            model_file = open(model_file, 'w')
+            model_file = open(args['model_file'], 'w')
             files_to_close.append(model_file)
 
-            text_file = args['text_file']
-            if not text_file:
-                raise ValueError('"text-file must be specified for command train')
-            text_file = open(text_file, 'r')
+            text_file = open(args['text_file'], 'r')
             files_to_close.append(text_file)
 
             train(text_file, model_file)
 
         elif command == 'hack':
-            model_file = args['model_file']
-            if not model_file:
-                raise ValueError('"model-file" should be specified for command hack')
-
-            model_file = open(model_file, 'r')
+            model_file = open(args['model_file'], 'r')
             files_to_close.append(model_file)
             hack(input_file, output_file, model_file)
 

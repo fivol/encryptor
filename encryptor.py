@@ -2,6 +2,7 @@
 
 import sys
 import argparse
+from contextlib import suppress
 from encoder_decoder import encode_decode
 from trainer import train
 from hackerman import hack
@@ -34,7 +35,6 @@ hack_parser.add_argument('--model-file', required=True)
 hack_parser.add_argument('--input-file', default=sys.stdin)
 hack_parser.add_argument('--output-file', default=sys.stdout)
 
-
 if __name__ == '__main__':
     args = vars(parser.parse_args())
     command = args['command']
@@ -57,25 +57,21 @@ if __name__ == '__main__':
                 output_file,
                 args['cipher'],
                 args['key'],
-                decode=command == 'decode'
+                decode=(command == 'decode')
             )
 
         elif command == 'train':
-            model_file = open(args['model_file'], 'w')
-            files_to_close.append(model_file)
-
-            text_file = open(args['text_file'], 'r')
-            files_to_close.append(text_file)
-
-            train(text_file, model_file)
+            with open(args['model_file'], 'w') as model_file:
+                with open(args['text_file'], 'r') as text_file:
+                    train(text_file, model_file)
 
         elif command == 'hack':
-            model_file = open(args['model_file'], 'r')
-            files_to_close.append(model_file)
-            hack(input_file, output_file, model_file)
+            with open(args['model_file'], 'r') as model_file:
+                hack(input_file, output_file, model_file)
 
     except ValueError as e:
         print(e)
     finally:
         for file in files_to_close:
-            file.close()
+            with suppress(Exception):
+                file.close()

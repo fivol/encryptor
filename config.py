@@ -1,5 +1,13 @@
-VERSION = '1.1.23'
+import string
 
-ALPHABET_SIZE = 26
-LOWER_FIRST_DIGIT = 'a'
-UPPER_FIRST_DIGIT = 'A'
+VERSION = '1.2.0'
+
+READ_WRITE_BUFFER_SIZE = 1024
+
+alphabets = [
+    string.ascii_lowercase,
+    string.ascii_uppercase,
+    string.digits
+]
+
+MAX_ALPHABET_SIZE = max(map(len, alphabets))

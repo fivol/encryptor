@@ -1,21 +1,5 @@
-import sys
-from config import ALPHABET_SIZE, LOWER_FIRST_DIGIT, UPPER_FIRST_DIGIT
-from utils import open_files_decorator
-import string
-
-
-def shift_char(char, shift):
-    alphabets = [
-        string.ascii_lowercase,
-        string.ascii_uppercase,
-        string.digits
-    ]
-    for alphabet in alphabets:
-        if char in alphabet:
-            alphabet_len = len(alphabet)
-            return alphabet[(alphabet.index(char) + shift + alphabet_len) % alphabet_len]
-
-    return char
+from config import READ_WRITE_BUFFER_SIZE
+from utils import shift_char, get_char_num
 
 
 def caesar_cipher_encrypt(input_stream, output_stream, shift, decode=False):
@@ -23,28 +7,33 @@ def caesar_cipher_encrypt(input_stream, output_stream, shift, decode=False):
         shift *= -1
 
     while True:
-        c = input_stream.read(1)
-        if not c:
+        buffer = input_stream.read(READ_WRITE_BUFFER_SIZE)
+        output_buffer = ''
+        if not buffer:
             break
-        shifted_char = shift_char(c, shift)
-        output_stream.write(shifted_char)
+        for c in buffer:
+            output_buffer += shift_char(c, shift)
+
+        output_stream.write(output_buffer)
 
 
 def vigenere_cipher_encrypt(input_stream, output_stream, key, decode=False):
-    key = key.lower()
-    key_digits = [ord(i) - ord('a') for i in key if 0 <= ord(i) - ord('a') < ALPHABET_SIZE]
+    key_digits = map(lambda x: get_char_num(x), key)
     if decode:
-        key_digits = list(map(lambda x: -x + ALPHABET_SIZE, key_digits))
+        key_digits = list(map(lambda x: -x, key_digits))
 
     j = 0
     while True:
-        c = input_stream.read(1)
-        if not c:
+        buffer = input_stream.read(READ_WRITE_BUFFER_SIZE)
+        output_buffer = ''
+        if not buffer:
             break
+        for c in buffer:
+            shift = key_digits[j % len(key_digits)]
+            output_buffer += shift_char(c, shift)
+            j += 1
 
-        shift = key_digits[j % len(key_digits)]
-        output_stream.write(shift_char(c, shift))
-        j += 1
+        output_stream.write(output_buffer)
 
 
 def encode_decode(input_file, output_file, cipher, key, decode=False):

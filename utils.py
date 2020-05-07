@@ -1,33 +1,18 @@
+from config import alphabets
 
-def open_files_decorator(files_replace_dict):
-    def decorator(func):
-        def wrapper(*args, **kwargs):
-            args_with_files = []
-            opened_files = []
-            for arg_num, arg in enumerate(args):
-                if arg_num in files_replace_dict:
-                    if not arg and files_replace_dict[arg_num][0]:
-                        file = files_replace_dict[arg_num][0]
-                    else:
-                        file = open(arg, files_replace_dict[arg_num][1])
-                        opened_files.append(file)
-                    args_with_files.append(file)
-                else:
-                    args_with_files.append(arg)
 
-            exception = None
-            result = None
-            try:
-                result = func(*args_with_files, **kwargs)
-            except Exception as e:
-                exception = e
+def get_char_num(char):
+    for alphabet in alphabets:
+        if char in alphabet:
+            return alphabet.index(char)
 
-            for file in opened_files:
-                file.close()
+    return 0
 
-            if exception:
-                raise exception
-            return result
 
-        return wrapper
-    return decorator
+def shift_char(char, shift):
+    for alphabet in alphabets:
+        if char in alphabet:
+            alphabet_len = len(alphabet)
+            return alphabet[(alphabet.index(char) + shift) % alphabet_len]
+
+    return char

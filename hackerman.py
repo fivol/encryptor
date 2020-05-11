@@ -13,10 +13,8 @@ def model_value_similarity(value1, value2):
 
 def model_similarity_metric(curr_model, base_model, curr_model_shift=0):
     return sum(
-        [
-            model_value_similarity(value, base_model.get(shift_char(char, curr_model_shift), 0))
-            for char, value in curr_model.items()
-        ]
+        model_value_similarity(value, base_model.get(shift_char(char, curr_model_shift), 0))
+        for char, value in curr_model.items()
     )
 
 

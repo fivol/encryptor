@@ -1,9 +1,5 @@
 ENCRYPTOR PROJECT
 
-NOVICHKOV BORIS
-B05-924
-
-
 # Шифратор
 
 ## 1.1. Шифрование
@@ -47,3 +43,5 @@ B05-924
 * --model-file - путь к файлу модели, которая будет использоваться.
 #### Пример:
 ./encryptor.py hack --input-file text_files/output.txt --output-file text_files/hacked.txt --model-file text_files/model.json
+
+Год создания: 2019
